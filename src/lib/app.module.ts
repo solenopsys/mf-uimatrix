@@ -2,8 +2,8 @@ import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 import {RouterModule, Routes} from "@angular/router";
 import {
-    BootstrapComponent,
-    MenuLoaderService,
+    BootstrapComponent, InterfaceState,
+    MenuLoaderService, MenuState,
     SetLeftPanel,
     SetTabs,
     UITemplatesModule
@@ -24,7 +24,7 @@ import {
     ExhibitTreeComponent
 } from "./comps";
 
-//export const STATE=[InterfaceState, MenuState]
+export const STATES=[InterfaceState, MenuState]
 
 import {ExhibitionListComponent} from "./exhibition-list/exhibition-list.component";
 import {ExhibitComponent} from "./exhibit/exhibit.component";
@@ -36,13 +36,36 @@ import {UIModalsModule} from "@solenopsys/ui-modals";
 import {UIFormsModule} from "@solenopsys/ui-forms";
 import {UINavigateModule} from "@solenopsys/ui-navigate";
 import {UIChartsModule} from "@solenopsys/ui-charts";
-import {Store} from "@ngxs/store";
+import {NgxsModule, NoopNgxsExecutionStrategy, Store} from "@ngxs/store";
 import {IconMenuProvider} from "./menu/icon-menu-provider";
 import {ExbeditMenuProvider} from "./menu/ex-menu-provider";
 import {ThemesMenuProvider} from "./menu/themes-menu-provider";
 import {ColorSchemesService} from "@solenopsys/ui-themes";
 import {ThemeConfigComponent} from './theme-config/theme-config.component';
 import {ThemesParentComponent} from './themes-parent/themes-parent.component';
+import {NgxsLoggerPluginModule} from "@ngxs/logger-plugin";
+import {NgxsRouterPluginModule} from "@ngxs/router-plugin";
+
+
+export function createNgxs(develop = false, stores = [], forRoot = false): any[] {
+    return [
+        forRoot ? NgxsModule.forRoot(
+                [ ...stores],
+                {
+                    developmentMode: develop,
+                    selectorOptions: {injectContainerState: true},
+                    executionStrategy: NoopNgxsExecutionStrategy
+                }) :
+            NgxsModule.forFeature(
+                [ ...stores],
+            ),
+        NgxsLoggerPluginModule.forRoot(),
+        NgxsRouterPluginModule.forRoot(),
+        //  NgxsReduxDevtoolsPluginModule.forRoot()
+        //   NgxsFormPluginModule.forRoot(),
+    ]
+}
+
 
 export const URL_MAPPING_SUBJECT$: BehaviorSubject<{ [key: string]: string }> =
     new BehaviorSubject<{ [p: string]: string }>(undefined);
@@ -71,21 +94,7 @@ export const PROVIDERS_CONF = [
 
 
 @NgModule({
-    imports: [
-        HttpClientModule,
-        CommonModule,
-        BrowserModule,
-        UIListsModule,
-        UIControlsModule,
-        UINavigateModule,
-        UIFormsModule,
-        UIIconsModule,
-        UIModalsModule,
-        UITemplatesModule,
-        UIChartsModule,
-        RouterModule.forRoot(routes)
-    ],
-    providers: [...PROVIDERS_CONF],
+    bootstrap: [BootstrapComponent],
     declarations: [
         ExhibitSubMenuComponent,
         ExhibitSelectEntityComponent,
@@ -103,7 +112,23 @@ export const PROVIDERS_CONF = [
         ThemeConfigComponent,
         ThemesParentComponent
     ],
-    bootstrap: [BootstrapComponent]
+    imports: [
+        HttpClientModule,
+        CommonModule,
+        BrowserModule,
+        UIListsModule,
+        UIControlsModule,
+        UINavigateModule,
+        UIFormsModule,
+        UIIconsModule,
+        UIModalsModule,
+        UITemplatesModule,
+        UIChartsModule,
+        RouterModule.forRoot(routes),
+        ...createNgxs(false, STATES, true),
+
+    ],
+    providers: [...PROVIDERS_CONF]
 })
 export class AppModule {
     constructor(
