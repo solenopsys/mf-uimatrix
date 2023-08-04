@@ -2,7 +2,7 @@ import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 import {RouterModule, Routes} from "@angular/router";
 import {
-    BootstrapComponent, InterfaceState,
+     InterfaceState,
     MenuLoaderService, MenuState,
     SetLeftPanel,
     SetTabs,
@@ -94,7 +94,7 @@ export const PROVIDERS_CONF = [
 
 
 @NgModule({
-    bootstrap: [BootstrapComponent],
+    bootstrap: [],
     declarations: [
         ExhibitSubMenuComponent,
         ExhibitSelectEntityComponent,
