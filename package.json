@@ -4,7 +4,7 @@
   "scripts": {
     "build": "xs-pack"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@solenopsys/fl-dgraph": "^0.1.0",
     "@solenopsys/fl-globals": "^0.1.0",
     "@solenopsys/fl-storage": "^0.1.0",
